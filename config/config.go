@@ -22,8 +22,9 @@ func init() {
 		log.Println("Failed to load the DB envs")
 		log.Fatal(err)
 	}
-
 }
+
+var Envs = GetConfigs()
 
 func GetConfigs() *Config {
 	return &Config{
@@ -31,7 +32,7 @@ func GetConfigs() *Config {
 		DBPassword: getEnv("DB_PASS", "password"),
 		DBAddress:  getEnv("DB_ADDRESS", "127.0.0.1:3306"),
 		Port:       getEnv("PORT", ":8080"),
-		DBName:     getEnv("DB_NAME", "User_DB"),
+		DBName:     getEnv("DB_NAME", "UserDB"),
 		PublicHost: getEnv("PUBLIC_HOST", "localhost"),
 	}
 }

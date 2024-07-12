@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: 'mysql'
+    volumes:
+      - ecommercedata:/var/lib/mysql
+    ports:
+      - '3306:3306'
+    env_file:
+      - ./.env
+    container_name: mysqlContainer
+volumes:
+  ecommercedata:
