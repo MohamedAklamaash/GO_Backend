@@ -29,11 +29,11 @@ var Envs = GetConfigs()
 func GetConfigs() *Config {
 	return &Config{
 		DbUserName: getEnv("DB_USER_NAME", "root"),
-		DBPassword: getEnv("DB_PASS", "password"),
+		DBPassword: getEnv("DB_PASS", "akla123%"),
 		DBAddress:  getEnv("DB_ADDRESS", "127.0.0.1:3306"),
 		Port:       getEnv("PORT", ":8080"),
 		DBName:     getEnv("DB_NAME", "UserDB"),
-		PublicHost: getEnv("PUBLIC_HOST", "localhost"),
+		PublicHost: getEnv("PUBLIC_HOST", "http://localhost"),
 	}
 }
 

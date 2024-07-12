@@ -1,26 +1,18 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	"log"
+	"os"
 
-	"github.com/MohamedAklamaash/GO_Simple_CRUD_Backend_WIth_SQL/cmd/api"
 	"github.com/MohamedAklamaash/GO_Simple_CRUD_Backend_WIth_SQL/config"
 	"github.com/MohamedAklamaash/GO_Simple_CRUD_Backend_WIth_SQL/db"
-	"github.com/go-sql-driver/mysql"
-	"github.com/joho/godotenv"
+	mysqlCfg "github.com/go-sql-driver/mysql"
+	"github.com/golang-migrate/migrate/v4"
+	mysql "github.com/golang-migrate/migrate/v4/database/mysql"
 )
 
-func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
-}
-
 func main() {
-
-	cfg := mysql.Config{
+	cfg := mysqlCfg.Config{
 		User:                 config.Envs.DbUserName,
 		Passwd:               config.Envs.DBPassword,
 		Addr:                 config.Envs.DBAddress,
@@ -31,21 +23,23 @@ func main() {
 	}
 
 	db, err := db.NewMySQLStorage(cfg)
+	driver, _ := mysql.WithInstance(db, &mysql.Config{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	initStorage(db)
-
-	server := api.NewAPIServer(":8080", db)
-	if err := server.Run(); err != nil {
-		log.Fatal(err)
-	}
-}
-
-func initStorage(db *sql.DB) {
-	err := db.Ping()
+	m, err := migrate.NewWithDatabaseInstance("file://cmd/migrate/migrations", "mysql", driver)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("DB is running")
+	cmd := os.Args[len(os.Args)-1]
+	if cmd == "up" {
+		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+			log.Fatal(err)
+		}
+	}
+	if cmd == "down" {
+		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
+			log.Fatal(err)
+		}
+	}
 }
